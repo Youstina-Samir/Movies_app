@@ -40,6 +40,8 @@ dependencies:
   carousel_slider:
 
 dev_dependencies:
+  sqflite:
+  path:
   flutter_test:
     sdk: flutter
 

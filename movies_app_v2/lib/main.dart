@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:movies_app_v2/pages/fav_page.dart';
 import 'package:movies_app_v2/pages/home_page.dart';
 import 'package:movies_app_v2/pages/search_page.dart';
 import 'package:provider/provider.dart';
@@ -109,8 +110,8 @@ class _MyHomePageState extends State<MyHomePage> {
             index: currentPageIndex, // Controls which widget to show
             children: [
               HomePage(),
-              SearchPage() // Home page widget
-              // Add other pages here
+              SearchPage(), // Home page widget
+              FavoriteMoviesPage() // Add other pages here
             ],
           ),
         ),

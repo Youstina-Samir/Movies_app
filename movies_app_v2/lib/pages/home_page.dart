@@ -1,7 +1,10 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:movies_app_v2/db.dart';
 import 'package:provider/provider.dart';
 import '../Provider.dart';
+import '../model/movie.dart';
+import 'MovieDetailsPage.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({super.key});
@@ -40,51 +43,45 @@ class _HomePageState extends State<HomePage> {
                   options: CarouselOptions(
                     height: 400,
                     enlargeCenterPage: true,
-                    // Optional: makes the centered item larger
                     viewportFraction: 0.8,
-                    // Controls the width of the carousel items
                     autoPlay: true,
-                    // Set to true if you want autoplay
                     aspectRatio: 2.0,
-                    // Controls the aspect ratio
                     initialPage: 0,
                   ),
                   itemBuilder:
                       (BuildContext context, int index, int realIndex) {
                     final album = moviesProvider.UpcomingMoviesList[index];
-                    return Container(
-                      // width: 200,
-                      child: Stack(
-                        children: [
-                          album.posterPath != null
-                              ? Image.network(
-                                  'https://image.tmdb.org/t/p/w500${album.posterPath}',
-                                  width: MediaQuery.of(context)
-                                      .size
-                                      .width, // Fill screen width
-                                  fit: BoxFit.cover,
-                                )
-                              : Container(
-                                  height: 150,
-                                  width: MediaQuery.of(context).size.width,
-                                  color: Colors.grey,
-                                  child: Center(child: Text('No Image')),
-                                ),
-
-                          SizedBox(height: 8),
-                          // Row(
-                          // children: [
-                          //   Text(album.originalTitle ?? album.title ?? 'No Title Available'),
-                          //   SizedBox(width: 8),
-                          //   Row(
-                          //     children: [
-                          //       Icon(Icons.star,color: Colors.yellow,),
-                          //       Text(album.voteAverage.toString()),
-                          //     ],
-                          //   ),
-                          // ],
-                          // ),
-                        ],
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                MovieDetailsPage(movie: album),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        // width: 200,
+                        child: Stack(
+                          children: [
+                            album.posterPath != null
+                                ? Image.network(
+                                    'https://image.tmdb.org/t/p/w500${album.posterPath}',
+                                    width: MediaQuery.of(context)
+                                        .size
+                                        .width, // Fill screen width
+                                    fit: BoxFit.cover,
+                                  )
+                                : Container(
+                                    height: 150,
+                                    width: MediaQuery.of(context).size.width,
+                                    color: Colors.grey,
+                                    child: Center(child: Text('No Image')),
+                                  ),
+                            SizedBox(height: 8),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -109,13 +106,11 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     final album = moviesProvider.popularList[index];
                     return MovieCard(
+                      movie: album,
                       posterPath: album.posterPath,
                       title: album.title,
                       originalTitle: album.originalTitle,
                       voteAverage: album.voteAverage,
-                      onPressed: () {
-                        // Handle button press
-                      },
                     );
                   },
                 ),
@@ -139,13 +134,11 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     final TopRatedalbum = moviesProvider.TopRatedList[index];
                     return MovieCard(
+                      movie: TopRatedalbum,
                       posterPath: TopRatedalbum.posterPath,
                       title: TopRatedalbum.title,
                       originalTitle: TopRatedalbum.originalTitle,
                       voteAverage: TopRatedalbum.voteAverage,
-                      onPressed: () {
-                        // Handle button press
-                      },
                     );
                   },
                 ),
@@ -158,77 +151,131 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class MovieCard extends StatelessWidget {
+class MovieCard extends StatefulWidget {
+  final Results movie;
   final String? posterPath;
   final String? title;
   final String? originalTitle;
   final double? voteAverage;
-  final VoidCallback? onPressed; // For button actions
 
   MovieCard({
     Key? key,
+    required this.movie,
     required this.posterPath,
     required this.title,
     required this.originalTitle,
     required this.voteAverage,
-    this.onPressed,
   }) : super(key: key);
 
   @override
+  _MovieCardState createState() => _MovieCardState();
+}
+
+class _MovieCardState extends State<MovieCard> {
+  bool isMovieSaved = false;
+
+  @override
+  void initState() {
+    super.initState();
+    checkIfSaved();
+  }
+
+  Future<void> checkIfSaved() async {
+    bool saved = await isSaved(widget.movie.id!);
+    setState(() {
+      isMovieSaved = saved;
+    });
+  }
+
+  void saveMovie(int movieId) async {
+    if (isMovieSaved) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${widget.movie.title} is already saved!')),
+      );
+    } else {
+      await insertMovie(widget.movie);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${widget.movie.title} has been saved!')),
+      );
+      setState(() {
+        isMovieSaved = true;
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    checkIfSaved();
     return Container(
       width: 200,
       child: Card(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12.0),
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: posterPath != null
-                      ? Image.network(
-                          'https://image.tmdb.org/t/p/w500$posterPath',
-                          height: 250,
-                          width: 200,
-                          fit: BoxFit.cover,
-                        )
-                      : Container(
-                          height: 150,
-                          width: 200,
-                          color: Colors.grey,
-                          child: Center(child: Text('No Image')),
-                        ),
-                ),
-                Positioned(
-                  top: 8,
-                  right: -5,
-                  child: ElevatedButton(
-                    onPressed: onPressed,
-                    child: Icon(Icons.add, color: Colors.white),
-                    style: ElevatedButton.styleFrom(
-                      shape: CircleBorder(),
-                      backgroundColor: Color(0x498F7676),
-                      padding: EdgeInsets.all(8),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MovieDetailsPage(movie: widget.movie),
+              ),
+            );
+          },
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: widget.posterPath != null
+                        ? Image.network(
+                            'https://image.tmdb.org/t/p/w500${widget.posterPath}',
+                            height: 250,
+                            width: 200,
+                            fit: BoxFit.cover,
+                          )
+                        : Container(
+                            height: 150,
+                            width: 200,
+                            color: Colors.grey,
+                            child: Center(child: Text('No Image')),
+                          ),
+                  ),
+                  Positioned(
+                    top: 8,
+                    right: -5,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        saveMovie(widget.movie.id!);
+                      },
+                      child: Icon(
+                        isMovieSaved ? Icons.check : Icons.add,
+                        color: Colors.white,
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        shape: CircleBorder(),
+                        backgroundColor: Color(0x498F7676),
+                        padding: EdgeInsets.all(8),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(height: 8),
-            ListTile(
-              title: Text(originalTitle ?? title ?? 'No Title Available'),
-              subtitle: Row(
-                children: [
-                  Icon(Icons.star, color: Colors.yellow),
-                  Text(voteAverage?.toString() ?? '0'),
                 ],
               ),
-            ),
-          ],
+              SizedBox(height: 8),
+              ListTile(
+                title: Text(widget.originalTitle ??
+                    widget.title ??
+                    'No Title Available'),
+                subtitle: Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.yellow),
+                    Text(widget.voteAverage?.toString() ?? '0'),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

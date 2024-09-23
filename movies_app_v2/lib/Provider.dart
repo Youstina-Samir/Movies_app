@@ -6,22 +6,21 @@ import 'model/Categories.dart'; // For JSON decoding
 
 class moviesProvider with ChangeNotifier {
   List<Results> albums1 = [];
-
   List<Results> get UpcomingMoviesList => albums1;
+
   List<Results> titleAlbums = [];
-
   List<Results> get SearchByTitleList => titleAlbums;
+
   List<Genres> genreAlbum = [];
-
   List<Genres> get genreList => genreAlbum;
+
   List<Results> allGenreMovies = [];
-
   List<Results> get allGenreMoviesList => allGenreMovies;
+
   List<Results> popularAlbum = [];
-
   List<Results> get popularList => popularAlbum;
-  List<Results> TopRatedAlbum = [];
 
+  List<Results> TopRatedAlbum = [];
   List<Results> get TopRatedList => TopRatedAlbum;
   var headers = {
     'accept': 'application/json',

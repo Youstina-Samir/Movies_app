@@ -102,4 +102,50 @@ class Results {
     data['vote_count'] = this.voteCount;
     return data;
   }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'adult': (adult ?? false) ? 1 : 0,
+      'backdrop_path': backdropPath,
+      'genre_ids': genreIds != null ? genreIds!.join(',') : '',
+      'original_language': originalLanguage,
+      'original_title': originalTitle,
+      'overview': overview,
+      'popularity': popularity,
+      'poster_path': posterPath,
+      'release_date': releaseDate,
+      'title': title,
+      'video': (video ?? false) ? 1 : 0,
+      'vote_average': voteAverage,
+      'vote_count': voteCount,
+    };
+  }
+
+  factory Results.fromMap(Map<String, dynamic> map) {
+    return Results(
+      id: map['id'],
+      adult: (map['adult'] ?? 0) == 1,
+      // Convert integer to boolean
+      backdropPath: map['backdrop_path'],
+      genreIds: map['genre_ids'] != null && map['genre_ids'].isNotEmpty
+          ? (map['genre_ids']
+              .split(',')
+              .map((id) => int.parse(id))
+              .toList()
+              .cast<int>()) // Explicitly cast to List<int>
+          : [],
+      originalLanguage: map['original_language'],
+      originalTitle: map['original_title'],
+      overview: map['overview'],
+      popularity: map['popularity'],
+      posterPath: map['poster_path'],
+      releaseDate: map['release_date'],
+      title: map['title'],
+      video: (map['video'] ?? 0) == 1,
+      // Convert integer to boolean
+      voteAverage: map['vote_average'],
+      voteCount: map['vote_count'],
+    );
+  }
 }
