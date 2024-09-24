@@ -2,7 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:movies_app_v2/db.dart';
 import 'package:provider/provider.dart';
-import '../Provider.dart';
+import '../ViewModelProvider.dart';
 import '../model/movie.dart';
 import 'MovieDetailsPage.dart';
 
@@ -16,7 +16,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<moviesProvider>(
+    return Consumer<moviesViewModel>(
       builder: (context, moviesProvider, child) {
         if (moviesProvider.UpcomingMoviesList.isEmpty) {
           return Center(child: CircularProgressIndicator());

@@ -4,7 +4,7 @@ import 'package:movies_app_v2/model/movie.dart';
 import 'dart:convert';
 import 'model/Categories.dart'; // For JSON decoding
 
-class moviesProvider with ChangeNotifier {
+class moviesViewModel with ChangeNotifier {
   List<Results> albums1 = [];
   List<Results> get UpcomingMoviesList => albums1;
 

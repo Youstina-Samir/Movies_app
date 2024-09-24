@@ -3,12 +3,12 @@ import 'package:movies_app_v2/pages/fav_page.dart';
 import 'package:movies_app_v2/pages/home_page.dart';
 import 'package:movies_app_v2/pages/search_page.dart';
 import 'package:provider/provider.dart';
-import 'Provider.dart';
+import 'ViewModelProvider.dart';
 
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (context) => moviesProvider(),
+      create: (context) => moviesViewModel(),
       child: MyApp(),
     ),
   );
@@ -56,7 +56,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _fetchData() async {
-    final resultsProvider = Provider.of<moviesProvider>(context, listen: false);
+    final resultsProvider =
+        Provider.of<moviesViewModel>(context, listen: false);
     await resultsProvider.fetchUpcomingMovies();
     await resultsProvider.fetchGenres();
     await resultsProvider.fetchAiringToday();

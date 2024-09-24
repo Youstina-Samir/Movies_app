@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../Provider.dart';
+import '../ViewModelProvider.dart';
 import '../db.dart';
 import 'MovieDetailsPage.dart';
 
@@ -18,7 +18,8 @@ class _SearchPageState extends State<SearchPage> {
   bool isSearching = false;
 
   Future<void> fetchData(String inputTitle) async {
-    final resultsProvider = Provider.of<moviesProvider>(context, listen: false);
+    final resultsProvider =
+        Provider.of<moviesViewModel>(context, listen: false);
     await resultsProvider.fetchByTitleSearch(inputTitle);
     setState(() {
       isSearching = true; // Search is active
@@ -53,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<moviesProvider>(
+    return Consumer<moviesViewModel>(
       builder: (context, moviesProvider, child) {
         var albumList = isSearching
             ? moviesProvider.SearchByTitleList
