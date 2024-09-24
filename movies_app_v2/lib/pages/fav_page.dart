@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movies_app_v2/model/movie.dart';
-import '../db.dart';
+import '../Services/db.dart';
 import 'MovieDetailsPage.dart';
 
 class FavoriteMoviesPage extends StatefulWidget {

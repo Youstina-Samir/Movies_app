@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:movies_app_v2/db.dart';
+import 'package:movies_app_v2/Services/db.dart';
 import 'package:provider/provider.dart';
 import '../ViewModelProvider.dart';
 import '../model/movie.dart';
@@ -16,9 +16,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
-    return Consumer<moviesViewModel>(
+    return Consumer<MoviesProvider>(
       builder: (context, moviesProvider, child) {
-        if (moviesProvider.UpcomingMoviesList.isEmpty) {
+        if (moviesProvider.upcomingMoviesList.isEmpty) {
           return Center(child: CircularProgressIndicator());
         }
 
@@ -39,7 +39,7 @@ class _HomePageState extends State<HomePage> {
 
                 // width: 400,
                 child: CarouselSlider.builder(
-                  itemCount: moviesProvider.UpcomingMoviesList.length,
+                  itemCount: moviesProvider.upcomingMoviesList.length,
                   options: CarouselOptions(
                     height: 400,
                     enlargeCenterPage: true,
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   itemBuilder:
                       (BuildContext context, int index, int realIndex) {
-                    final album = moviesProvider.UpcomingMoviesList[index];
+                    final album = moviesProvider.upcomingMoviesList[index];
                     return GestureDetector(
                       onTap: () {
                         Navigator.push(
@@ -130,9 +130,9 @@ class _HomePageState extends State<HomePage> {
                 height: 360,
                 child: ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: moviesProvider.TopRatedList.length,
+                  itemCount: moviesProvider.topRatedList.length,
                   itemBuilder: (context, index) {
-                    final TopRatedalbum = moviesProvider.TopRatedList[index];
+                    final TopRatedalbum = moviesProvider.topRatedList[index];
                     return MovieCard(
                       movie: TopRatedalbum,
                       posterPath: TopRatedalbum.posterPath,

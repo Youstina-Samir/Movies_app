@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../ViewModelProvider.dart';
-import '../db.dart';
+import '../Services/db.dart';
 import 'MovieDetailsPage.dart';
 
 class SearchPage extends StatefulWidget {
@@ -18,8 +18,7 @@ class _SearchPageState extends State<SearchPage> {
   bool isSearching = false;
 
   Future<void> fetchData(String inputTitle) async {
-    final resultsProvider =
-        Provider.of<moviesViewModel>(context, listen: false);
+    final resultsProvider = Provider.of<MoviesProvider>(context, listen: false);
     await resultsProvider.fetchByTitleSearch(inputTitle);
     setState(() {
       isSearching = true; // Search is active
@@ -54,10 +53,10 @@ class _SearchPageState extends State<SearchPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<moviesViewModel>(
+    return Consumer<MoviesProvider>(
       builder: (context, moviesProvider, child) {
         var albumList = isSearching
-            ? moviesProvider.SearchByTitleList
+            ? moviesProvider.searchByTitleList
             : moviesProvider.allGenreMoviesList;
 
         return Column(
@@ -108,7 +107,7 @@ class _SearchPageState extends State<SearchPage> {
                         selectedIndex = index; // Update the selected index
                         genreId = album.id.toString();
                         isSearching = false;
-                        moviesProvider.fetchBygenre(genreId);
+                        moviesProvider.fetchByGenre(genreId);
                       });
                     },
                     child: Container(

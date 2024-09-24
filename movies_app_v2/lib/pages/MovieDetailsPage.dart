@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:movies_app_v2/ViewModelProvider.dart';
-import '../db.dart'; // Assuming this contains your DB logic for saving movies
+import '../Services/db.dart'; // Assuming this contains your DB logic for saving movies
 import '../model/Categories.dart';
 import '../model/movie.dart';
 
@@ -15,7 +15,7 @@ class MovieDetailsPage extends StatefulWidget {
 
 class _MovieDetailsPageState extends State<MovieDetailsPage> {
   bool isMovieSaved = false;
-  final movieProvider = moviesViewModel();
+  final movieProvider = MoviesProvider();
 
   @override
   void initState() {

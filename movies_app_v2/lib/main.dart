@@ -8,7 +8,7 @@ import 'ViewModelProvider.dart';
 void main() {
   runApp(
     ChangeNotifierProvider(
-      create: (context) => moviesViewModel(),
+      create: (context) => MoviesProvider(),
       child: MyApp(),
     ),
   );
@@ -56,12 +56,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _fetchData() async {
-    final resultsProvider =
-        Provider.of<moviesViewModel>(context, listen: false);
+    final resultsProvider = Provider.of<MoviesProvider>(context, listen: false);
     await resultsProvider.fetchUpcomingMovies();
     await resultsProvider.fetchGenres();
-    await resultsProvider.fetchAiringToday();
-    await resultsProvider.fetchTopRated();
+    await resultsProvider.fetchPopularMovies();
+    await resultsProvider.fetchTopRatedMovies();
   }
 
   @override
